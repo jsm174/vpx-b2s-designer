@@ -1,0 +1,191 @@
+.animation-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.animation-editor-body {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.animation-editor-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.animation-editor-right {
+  width: 280px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.animation-prop-group {
+  margin-bottom: 16px;
+}
+
+.animation-prop-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.animation-prop-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.animation-prop-label {
+  width: 100px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.animation-prop-input {
+  flex: 1;
+  padding: 4px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.animation-prop-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.animation-prop-input[type='number'] {
+  width: 80px;
+  flex: none;
+}
+
+.animation-prop-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.animation-prop-checkbox label {
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.animation-steps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.animation-steps-header h3 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.animation-steps-toolbar {
+  display: flex;
+  gap: 4px;
+}
+
+.animation-steps-toolbar button {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.animation-steps-container {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-primary);
+}
+
+.animation-steps-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.animation-steps-table th,
+.animation-steps-table td {
+  padding: 4px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.animation-steps-table th {
+  background: var(--bg-tertiary);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.animation-steps-table tbody tr {
+  cursor: pointer;
+}
+
+.animation-steps-table tbody tr:hover {
+  background: var(--bg-tertiary);
+}
+
+.animation-steps-table tbody tr.selected {
+  background: var(--selection);
+}
+
+.animation-steps-table .step-input {
+  width: 100%;
+  padding: 2px 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-size: 11px;
+}
+
+.animation-steps-table .step-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.animation-steps-table .step-input[type='number'] {
+  width: 60px;
+}
+
+.animation-editor-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.animation-editor-footer-left {
+  display: flex;
+  gap: 8px;
+}
+
+.animation-editor-footer-right {
+  display: flex;
+  gap: 8px;
+}

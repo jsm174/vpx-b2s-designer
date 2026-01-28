@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VPX B2S Designer</title>
+  <!-- @web-only -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- @end-web-only -->
+  <link rel="stylesheet" href="src/shared/styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="toolbar">
+      <!-- @web-only -->
+      <div id="hamburger-menu">
+        <button id="hamburger-btn" title="Menu"><img src="icons/menu.png" alt="Menu"></button>
+        <div id="menu-dropdown" class="menu-dropdown"></div>
+      </div>
+      <div class="separator"></div>
+      <!-- @end-web-only -->
+      <div class="tool-group">
+        <button id="btn-undo" class="tool-btn icon-btn" title="Undo">
+          <img src="icons/undo.png" alt="Undo">
+        </button>
+        <button id="btn-redo" class="tool-btn icon-btn" title="Redo">
+          <img src="icons/redo.png" alt="Redo">
+        </button>
+      </div>
+      <div class="tool-group zoom-controls">
+        <button id="zoom-in" class="tool-btn" title="Zoom In">+</button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-out" class="tool-btn" title="Zoom Out">−</button>
+        <button id="zoom-home" class="tool-btn icon-btn" title="Fit to View">
+          <img src="icons/home.png" alt="Home">
+        </button>
+      </div>
+      <div class="separator"></div>
+      <div class="tool-group">
+        <button id="btn-show-score-frames" class="tool-btn icon-btn toggle-btn color-icon" title="Show Score Frames">
+          <img src="icons/led_small.png" alt="Score Frames">
+        </button>
+        <button id="btn-add-score" class="tool-btn icon-btn color-icon" title="Add New Reel/LED Frame">
+          <img src="icons/marker_reel.png" alt="Add Score">
+        </button>
+        <button id="btn-show-scoring" class="tool-btn icon-btn toggle-btn color-icon" title="Show Scoring">
+          <img src="icons/marker_reel4.png" alt="Scoring">
+        </button>
+      </div>
+      <div class="separator"></div>
+      <div class="tool-group">
+        <button id="btn-show-illumination-frames" class="tool-btn icon-btn toggle-btn color-icon" title="Show Illumination Frames">
+          <img src="icons/marker_bulb.png" alt="Illumination Frames">
+        </button>
+        <button id="btn-add-bulb" class="tool-btn icon-btn color-icon" title="Add New Bulb Frame">
+          <img src="icons/marker_newbulb.png" alt="Add Bulb">
+        </button>
+      </div>
+      <div class="tool-group">
+        <label class="toolbar-label">Lamp Filter:</label>
+        <select id="lamp-filter" class="toolbar-select" disabled>
+          <option value="all">All</option>
+          <option value="off">Off</option>
+          <option value="on">On</option>
+          <option value="always-on">Always On</option>
+          <option value="no-id">(without ID)</option>
+          <option value="with-name">(with name)</option>
+        </select>
+      </div>
+      <div class="tool-group">
+        <button id="btn-show-illumination" class="tool-btn icon-btn toggle-btn color-icon" title="Show illumination with fix intensity '2'">
+          <img src="icons/illumination2.png" alt="Illumination">
+        </button>
+        <button id="btn-show-illumination-intensity" class="tool-btn icon-btn toggle-btn color-icon" title="Show illumination with accurate intensity">
+          <img src="icons/illumination_intensity.png" alt="Illumination Intensity">
+        </button>
+      </div>
+      <div class="separator"></div>
+      <div class="tool-group">
+        <label class="toolbar-label">Current Image:</label>
+        <select id="current-image" class="toolbar-select" disabled>
+          <option value="backglass">Backglass</option>
+          <option value="dmd">DMD</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="main-content">
+      <div id="left-panel">
+        <div class="panel-section resizable-section" id="resources-section">
+          <h3>Resources</h3>
+          <div id="resources-list" class="section-content"></div>
+        </div>
+        <div class="section-resize-handle" data-section="resources"></div>
+        <div class="panel-section resizable-section" id="illumination-section">
+          <h3>Illumination</h3>
+          <div id="illumination-list" class="section-content"></div>
+        </div>
+        <div class="section-resize-handle" data-section="illumination"></div>
+        <div class="panel-section resizable-section" id="animations-section">
+          <h3>Animations <button id="btn-add-animation" class="panel-add-btn" title="Add Animation">+</button></h3>
+          <div id="animations-list" class="section-content"></div>
+        </div>
+        <div class="section-resize-handle" data-section="animations"></div>
+        <div class="panel-section resizable-section" id="scores-section">
+          <h3>Scores</h3>
+          <div id="scores-list" class="section-content"></div>
+        </div>
+      </div>
+      <div id="left-resize-handle"></div>
+
+      <div id="canvas-container">
+        <canvas id="editor-canvas"></canvas>
+      </div>
+
+      <div id="right-resize-handle"></div>
+      <div id="right-panel">
+        <div id="properties-panel">
+          <p class="empty-state">Select an item to view properties</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="console-resize-handle"></div>
+    <div id="console-panel">
+      <div id="console-header">
+        <span id="console-title">CONSOLE</span>
+        <div id="console-controls">
+          <button id="console-pin" class="console-btn" title="Pin scroll position">
+            <img src="icons/pin.png" alt="Pin">
+          </button>
+          <button id="console-clear" class="console-btn" title="Clear">
+            <img src="icons/trash.png" alt="Clear">
+          </button>
+          <button id="console-close" class="console-btn" title="Close">
+            <img src="icons/close.png" alt="Close">
+          </button>
+        </div>
+      </div>
+      <div id="console-output" tabindex="0"></div>
+    </div>
+
+    <div id="status-bar">
+      <span id="status-coords">X: 0, Y: 0</span>
+      <span id="status-file">No file loaded</span>
+    </div>
+  </div>
+
+  <div id="resize-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content" id="resize-content"></div>
+  </div>
+
+  <div id="brightness-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content" id="brightness-content"></div>
+  </div>
+
+  <!-- @electron-only -->
+  <script type="module" src="src/editor/main.ts"></script>
+  <!-- @end-electron-only -->
+  <!-- @web-only -->
+  <script type="module" src="src/web/main.ts"></script>
+  <!-- @end-web-only -->
+</body>
+</html>

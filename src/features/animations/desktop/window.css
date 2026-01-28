@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+#app {
+  height: 100vh;
+}

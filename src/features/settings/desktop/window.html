@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Settings</title>
+    <script>
+      var theme = new URLSearchParams(window.location.search).get('theme');
+      if (theme) document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles.css" />
+    <link rel="stylesheet" href="../shared/component.css" />
+    <link rel="stylesheet" href="window.css" />
+  </head>
+  <body>
+    <div class="settings-container" id="settings-container"></div>
+    <script type="module" src="./window.ts"></script>
+  </body>
+</html>

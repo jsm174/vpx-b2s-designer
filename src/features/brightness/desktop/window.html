@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Brightness</title>
+    <script>
+      var theme = new URLSearchParams(window.location.search).get('theme');
+      if (theme) document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles.css" />
+    <link rel="stylesheet" href="window.css" />
+  </head>
+  <body>
+    <div id="app" class="brightness-dialog">
+      <div class="brightness-body">
+        <div class="brightness-preview-container">
+          <canvas id="brightness-preview" width="280" height="200"></canvas>
+        </div>
+
+        <div class="brightness-controls">
+          <div class="brightness-slider-row">
+            <input type="range" id="brightness-slider" min="-100" max="100" value="0" />
+            <input type="number" id="brightness-number" class="win-input" value="0" min="-100" max="100" />
+          </div>
+
+          <label class="brightness-checkbox-row" id="ignore-grill-row">
+            <input type="checkbox" id="brightness-ignore-grill" checked />
+            <span>Ignore grill area</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="brightness-footer">
+        <button id="brightness-cancel" class="win-btn">Cancel</button>
+        <button id="brightness-ok" class="win-btn primary">OK</button>
+      </div>
+    </div>
+
+    <script type="module" src="./window.ts"></script>
+  </body>
+</html>
