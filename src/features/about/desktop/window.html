@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>About VPX B2S Designer</title>
+    <script>
+      var theme = new URLSearchParams(window.location.search).get('theme');
+      if (theme) document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles.css" />
+    <link rel="stylesheet" href="../shared/component.css" />
+    <link rel="stylesheet" href="window.css" />
+  </head>
+  <body>
+    <div class="about-container">
+      <img class="about-icon" id="about-icon" src="/icons/about-icon.png" alt="VPX B2S Designer" />
+      <div class="about-name">VPX B2S Designer</div>
+      <div class="about-version" id="about-version"></div>
+      <div class="about-thanks">
+        <div class="about-thanks-title">Special Thanks:</div>
+        <a href="https://github.com/vpinball/vpinball" target="_blank" rel="noopener">Visual Pinball</a>
+        <a href="https://github.com/vpinball/b2s-designer" target="_blank" rel="noopener">B2S Backglass Designer</a>
+      </div>
+    </div>
+    <script type="module" src="./window.ts"></script>
+  </body>
+</html>
