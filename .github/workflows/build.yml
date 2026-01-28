@@ -1,0 +1,290 @@
+name: Build
+
+on:
+  push:
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      revision: ${{ steps.version.outputs.revision }}
+      sha7: ${{ steps.version.outputs.sha7 }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          REVISION=$(git rev-list HEAD --count)
+          SHA7="${GITHUB_SHA::7}"
+          TAG="${VERSION}-${REVISION}-${SHA7}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "revision=${REVISION}" >> $GITHUB_OUTPUT
+          echo "sha7=${SHA7}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+  build-macos:
+    runs-on: macos-latest
+    needs: [version]
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version info
+        run: |
+          echo '{"revision":"${{ needs.version.outputs.revision }}","sha":"${{ needs.version.outputs.sha7 }}"}' > src/shared/version.json
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Import code signing certificate
+        if: vars.MACOS_CODESIGN == '1'
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo "${{ secrets.MACOS_CODESIGN_P12 }}" | base64 --decode > certificate.p12
+          security create-keychain -p "${{ secrets.MACOS_CODESIGN_P12_PASSWORD }}" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "${{ secrets.MACOS_CODESIGN_P12_PASSWORD }}" $KEYCHAIN_PATH
+          security import certificate.p12 -P "${{ secrets.MACOS_CODESIGN_P12_PASSWORD }}" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          rm certificate.p12
+
+      - name: Build
+        run: npm run make -- --arch=arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MACOS_CODESIGN: ${{ vars.MACOS_CODESIGN }}
+          MACOS_CODESIGN_APPLE_ID: ${{ secrets.MACOS_CODESIGN_APPLE_ID }}
+          MACOS_CODESIGN_PASSWORD: ${{ secrets.MACOS_CODESIGN_PASSWORD }}
+          MACOS_CODESIGN_TEAM_ID: ${{ secrets.MACOS_CODESIGN_TEAM_ID }}
+          MACOS_CODESIGN_DEVELOPER_ID: ${{ secrets.MACOS_CODESIGN_DEVELOPER_ID }}
+
+      - name: Stage artifacts
+        run: |
+          mkdir -p tmp
+          cp out/make/*.dmg tmp/vpx-b2s-designer-macos-arm64-${{ needs.version.outputs.tag }}.dmg
+          cp out/make/zip/darwin/arm64/*.zip tmp/vpx-b2s-designer-macos-arm64-${{ needs.version.outputs.tag }}.zip
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-macos-arm64-${{ needs.version.outputs.tag }}.dmg
+          path: tmp/*.dmg
+          if-no-files-found: error
+
+      - name: Upload macOS ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-macos-arm64-${{ needs.version.outputs.tag }}.zip
+          path: tmp/*.zip
+          if-no-files-found: error
+
+  build-linux:
+    runs-on: ubuntu-latest
+    needs: [version]
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Flatpak dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder elfutils
+          flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Set version info
+        run: |
+          echo '{"revision":"${{ needs.version.outputs.revision }}","sha":"${{ needs.version.outputs.sha7 }}"}' > src/shared/version.json
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run make -- --arch=x64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Stage artifacts
+        run: |
+          mkdir -p tmp
+          cp out/make/zip/linux/x64/*.zip tmp/vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.zip
+          cp out/make/deb/x64/*.deb tmp/vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.deb
+          cp out/make/rpm/x64/*.rpm tmp/vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.rpm
+          cp out/make/flatpak/x86_64/com.github.vpinball.vpx-b2s-designer_${{ needs.version.outputs.tag }}_x86_64.flatpak tmp/vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.flatpak
+
+      - name: Upload Linux ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.zip
+          path: tmp/*.zip
+          if-no-files-found: error
+
+      - name: Upload Linux DEB
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.deb
+          path: tmp/*.deb
+          if-no-files-found: error
+
+      - name: Upload Linux RPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.rpm
+          path: tmp/*.rpm
+          if-no-files-found: error
+
+      - name: Upload Linux Flatpak
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-linux-x64-${{ needs.version.outputs.tag }}.flatpak
+          path: tmp/*.flatpak
+          if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+    needs: [version]
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version info
+        run: |
+          echo '{"revision":"${{ needs.version.outputs.revision }}","sha":"${{ needs.version.outputs.sha7 }}"}' > src/shared/version.json
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run make -- --arch=x64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Stage artifacts
+        run: |
+          mkdir -p tmp
+          cp out/make/squirrel.windows/x64/*.exe tmp/vpx-b2s-designer-windows-x64-${{ needs.version.outputs.tag }}-setup.exe
+          cp out/make/zip/win32/x64/*.zip tmp/vpx-b2s-designer-windows-x64-${{ needs.version.outputs.tag }}.zip
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-windows-x64-${{ needs.version.outputs.tag }}.exe
+          path: tmp/*.exe
+          if-no-files-found: error
+
+      - name: Upload Windows ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-b2s-designer-windows-x64-${{ needs.version.outputs.tag }}.zip
+          path: tmp/*.zip
+          if-no-files-found: error
+
+  build-web:
+    runs-on: ubuntu-latest
+    needs: [version]
+    permissions:
+      contents: read
+      packages: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version info
+        run: |
+          echo '{"revision":"${{ needs.version.outputs.revision }}","sha":"${{ needs.version.outputs.sha7 }}"}' > src/shared/version.json
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build:web
+        env:
+          BASE_URL: /${{ github.event.repository.name }}/
+
+      - name: Setup Pages
+        if: github.ref_name == 'master'
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        if: github.ref_name == 'master'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-web
+
+  deploy-web:
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master'
+    needs: [build-web]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Resize Image</title>
+    <script>
+      var theme = new URLSearchParams(window.location.search).get('theme');
+      if (theme) document.documentElement.setAttribute('data-theme', theme);
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles.css" />
+    <link rel="stylesheet" href="window.css" />
+  </head>
+  <body>
+    <div id="app" class="resize-dialog">
+      <div class="resize-body">
+        <div class="resize-info">Current size: <span id="resize-current-size"></span></div>
+
+        <div class="resize-mode-group">
+          <label class="resize-radio">
+            <input type="radio" name="resize-mode" id="resize-mode-percentage" value="percentage" checked />
+            <span>By Percentage</span>
+          </label>
+          <label class="resize-radio">
+            <input type="radio" name="resize-mode" id="resize-mode-absolute" value="absolute" />
+            <span>By Absolute Size</span>
+          </label>
+        </div>
+
+        <div class="resize-section" id="percentage-section">
+          <div class="resize-field-row">
+            <label>Percentage</label>
+            <input type="number" id="resize-percentage" class="win-input" value="100" min="1" max="200" />
+            <span>%</span>
+          </div>
+        </div>
+
+        <div class="resize-section hidden" id="absolute-section">
+          <div class="resize-field-row">
+            <label>Width</label>
+            <input type="number" id="resize-width" class="win-input" min="1" />
+            <span>px</span>
+          </div>
+          <div class="resize-field-row">
+            <label>Height</label>
+            <input type="number" id="resize-height" class="win-input" min="1" />
+            <span>px</span>
+          </div>
+          <label class="resize-checkbox-row">
+            <input type="checkbox" id="resize-aspect-ratio" checked />
+            <span>Maintain aspect ratio</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="resize-footer">
+        <button id="resize-cancel" class="win-btn">Cancel</button>
+        <button id="resize-ok" class="win-btn primary">OK</button>
+      </div>
+    </div>
+
+    <script type="module" src="./window.ts"></script>
+  </body>
+</html>

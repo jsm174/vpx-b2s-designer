@@ -1,0 +1,141 @@
+<div id="animation-editor-modal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content animation-editor-modal-content">
+    <div class="modal-header">Animation Editor</div>
+    <div class="animation-editor">
+      <div class="animation-editor-body">
+        <div class="animation-editor-left">
+          <div class="animation-steps-header">
+            <h3>Animation Steps</h3>
+            <div class="animation-steps-toolbar">
+              <button id="web-anim-add-step" class="win-btn">+ Add</button>
+              <button id="web-anim-remove-step" class="win-btn" disabled>- Remove</button>
+              <button id="web-anim-move-up" class="win-btn" disabled>&#9650; Up</button>
+              <button id="web-anim-move-down" class="win-btn" disabled>&#9660; Down</button>
+            </div>
+          </div>
+          <div class="animation-steps-container">
+            <table class="animation-steps-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px">#</th>
+                  <th>Lamps On</th>
+                  <th style="width: 70px">Wait</th>
+                  <th>Lamps Off</th>
+                  <th style="width: 70px">Wait</th>
+                  <th style="width: 70px">Pulse</th>
+                </tr>
+              </thead>
+              <tbody id="web-anim-steps-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="animation-editor-right">
+          <div class="animation-prop-group">
+            <div class="animation-prop-title">General</div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Name</span>
+              <input type="text" id="web-anim-name" class="animation-prop-input" />
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Interval (ms)</span>
+              <input type="number" id="web-anim-interval" class="animation-prop-input" min="1" value="100" />
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Loops</span>
+              <input type="number" id="web-anim-loops" class="animation-prop-input" min="0" value="0" />
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Dual Mode</span>
+              <select id="web-anim-dual-mode" class="animation-prop-input">
+                <option value="Both">Both</option>
+                <option value="Authentic">Authentic</option>
+                <option value="Fantasy">Fantasy</option>
+              </select>
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">ID Join</span>
+              <input type="text" id="web-anim-id-join" class="animation-prop-input" />
+            </div>
+          </div>
+
+          <div class="animation-prop-group">
+            <div class="animation-prop-title">Behavior</div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Light at Start</span>
+              <select id="web-anim-light-start" class="animation-prop-input">
+                <option value="Off">Off</option>
+                <option value="On">On</option>
+                <option value="NoChange">No Change</option>
+                <option value="Reset">Reset</option>
+              </select>
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Light at End</span>
+              <select id="web-anim-light-end" class="animation-prop-input">
+                <option value="Off">Off</option>
+                <option value="On">On</option>
+                <option value="NoChange">No Change</option>
+                <option value="Reset">Reset</option>
+              </select>
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Stop Behavior</span>
+              <select id="web-anim-stop-behaviour" class="animation-prop-input">
+                <option value="Immediate">Immediate</option>
+                <option value="RunTillEnd">Run Till End</option>
+                <option value="ReturnToFirstStep">Return to First</option>
+              </select>
+            </div>
+            <div class="animation-prop-row">
+              <span class="animation-prop-label">Random Quality</span>
+              <input
+                type="number"
+                id="web-anim-random-quality"
+                class="animation-prop-input"
+                min="0"
+                max="100"
+                value="50"
+              />
+            </div>
+          </div>
+
+          <div class="animation-prop-group">
+            <div class="animation-prop-title">Options</div>
+            <div class="animation-prop-checkbox">
+              <input type="checkbox" id="web-anim-start-at-rom" />
+              <label for="web-anim-start-at-rom">Start at ROM start</label>
+            </div>
+            <div class="animation-prop-checkbox">
+              <input type="checkbox" id="web-anim-lock-last-step" />
+              <label for="web-anim-lock-last-step">Lock at last step</label>
+            </div>
+            <div class="animation-prop-checkbox">
+              <input type="checkbox" id="web-anim-hide-at-start" />
+              <label for="web-anim-hide-at-start">Hide at start</label>
+            </div>
+            <div class="animation-prop-checkbox">
+              <input type="checkbox" id="web-anim-bring-to-front" />
+              <label for="web-anim-bring-to-front">Bring to front</label>
+            </div>
+            <div class="animation-prop-checkbox">
+              <input type="checkbox" id="web-anim-random-start" />
+              <label for="web-anim-random-start">Random start</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="animation-editor-footer">
+        <div class="animation-editor-footer-left">
+          <button id="web-anim-delete" class="win-btn" disabled>Delete</button>
+        </div>
+        <div class="animation-editor-footer-right">
+          <button id="web-anim-cancel" class="win-btn">Cancel</button>
+          <button id="web-anim-ok" class="win-btn primary">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

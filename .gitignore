@@ -1,0 +1,10 @@
+node_modules/
+.vite/
+dist/
+dist-web/
+out/
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

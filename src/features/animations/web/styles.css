@@ -1,0 +1,24 @@
+.animation-editor-modal-content {
+  width: 900px;
+  max-width: 95vw;
+  height: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.animation-editor-modal-content .animation-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.animation-editor-modal-content .animation-editor-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.animation-editor-modal-content .animation-steps-container {
+  max-height: 300px;
+}
